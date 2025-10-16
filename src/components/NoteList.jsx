@@ -1,6 +1,6 @@
 import React from 'react'
 
-function NoteList({ notes, onDelete }) {
+function NoteList({ notes, onDelete, onEdit }) {
   if (notes.length === 0) {
     return (
       <p className='text-center text-gray-500'>
@@ -23,6 +23,13 @@ function NoteList({ notes, onDelete }) {
               }`}>
                 {note.priority}
               </span>
+              <button
+                onClick={() => onEdit(note)}
+                className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 rounded transition-colors"
+                title="Edit note"
+              >
+                ✏️
+              </button>
               <button
                 onClick={() => onDelete(note.id)}
                 className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"

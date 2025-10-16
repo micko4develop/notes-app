@@ -5,6 +5,7 @@ import { useState } from "react";
 
 export default function App() {
   const [notes, setNotes] = useState([]);
+  const [editingNote, setEditingNote] = useState(null);
 
   const handleDeleteNote = (noteId) => {
     if (window.confirm("Are you sure you want to delete this note?")) {
@@ -12,15 +13,40 @@ export default function App() {
     }
   };
 
+  const handleEditNote = (note) => {
+    setEditingNote(note);
+  };
+
+  const handleUpdateNote = (updatedNote) => {
+    setNotes(notes.map(note => 
+      note.id === updatedNote.id ? updatedNote : note
+    ));
+    setEditingNote(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingNote(null);
+  };
+
   return (
     <div className="max-w-lg mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">📝 Notes App</h2>
 
-      <NoteForm notes={notes} setNotes={setNotes} />
+      <NoteForm 
+        notes={notes} 
+        setNotes={setNotes} 
+        editingNote={editingNote}
+        onUpdateNote={handleUpdateNote}
+        onCancelEdit={handleCancelEdit}
+      />
       
       <div className="mt-8">
         <h3 className="text-xl font-semibold mb-4">Your Notes</h3>
-        <NoteList notes={notes} onDelete={handleDeleteNote} />
+        <NoteList 
+          notes={notes} 
+          onDelete={handleDeleteNote} 
+          onEdit={handleEditNote}
+        />
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextInput, SelectInput, TextAreaInput } from "./inputs";
 
-function NoteForm({ notes, setNotes }) {
+function NoteForm({ notes, setNotes, editingNote, onUpdateNote, onCancelEdit }) {
   const [formData, setFormData] = useState({
     title: "",
     priority: "Medium",
@@ -11,6 +11,27 @@ function NoteForm({ notes, setNotes }) {
   });
 
   const [isFormVisible, setIsFormVisible] = useState(true);
+
+  // Populate form when editing
+  useEffect(() => {
+    if (editingNote) {
+      setFormData({
+        title: editingNote.title,
+        priority: editingNote.priority,
+        category: editingNote.category,
+        description: editingNote.description
+      });
+      setIsFormVisible(true); // Show form when editing
+    } else {
+      // Reset form when not editing
+      setFormData({
+        title: "",
+        priority: "Medium",
+        category: "Work",
+        description: ""
+      });
+    }
+  }, [editingNote]);
 
   const priorityOptions = [
     { value: "High", label: "🔴 High" },
@@ -44,33 +65,55 @@ function NoteForm({ notes, setNotes }) {
       return;
     }
     
-    const newNote = {
-      id: Date.now(),
-      ...formData,
-      createdAt: new Date().toISOString()
-    };
-
-    setNotes([newNote, ...notes]);
+    if (editingNote) {
+      // Update existing note
+      const updatedNote = {
+        ...editingNote,
+        ...formData,
+        updatedAt: new Date().toISOString()
+      };
+      onUpdateNote(updatedNote);
+      alert("Note updated successfully!");
+    } else {
+      // Create new note
+      const newNote = {
+        id: Date.now(),
+        ...formData,
+        createdAt: new Date().toISOString()
+      };
+      setNotes([newNote, ...notes]);
+      alert("Note added successfully!");
+    }
     
+    // Reset form
     setFormData({
       title: "",
       priority: "Medium",
       category: "Work",
       description: ""
     });
-    
-    alert("Note added successfully!");
   };
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => setIsFormVisible(!isFormVisible)}
-        className="w-full mb-4 bg-gray-500 text-white py-2 rounded-lg cursor-pointer hover:bg-gray-600"
-      >
-        {isFormVisible ? "Hide Form" : "Show Form"}
-      </button>
+      <div className="flex gap-2 mb-4">
+        <button
+          type="button"
+          onClick={() => setIsFormVisible(!isFormVisible)}
+          className="flex-1 bg-gray-500 text-white py-2 rounded-lg cursor-pointer hover:bg-gray-600"
+        >
+          {isFormVisible ? "Hide Form" : "Show Form"}
+        </button>
+        {editingNote && (
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            className="px-4 bg-red-500 text-white py-2 rounded-lg cursor-pointer hover:bg-red-600"
+          >
+            Cancel Edit
+          </button>
+        )}
+      </div>
       
       {isFormVisible && (
         <form className="mb-6" onSubmit={handleSubmit}>
@@ -112,9 +155,9 @@ function NoteForm({ notes, setNotes }) {
           />
       <button 
         type="submit"
-        className="w-full bg-purple-500 text-white py-2 rounded-lg cursor-pointer hover: bg-purple-600"
+        className="w-full bg-purple-500 text-white py-2 rounded-lg cursor-pointer hover:bg-purple-600"
       >
-        Add Note
+        {editingNote ? "Update Note" : "Add Note"}
       </button>
         </form>
       )}
