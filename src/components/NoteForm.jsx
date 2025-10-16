@@ -12,7 +12,6 @@ function NoteForm({ notes, setNotes, editingNote, onUpdateNote, onCancelEdit }) 
 
   const [isFormVisible, setIsFormVisible] = useState(true);
 
-  // Populate form when editing
   useEffect(() => {
     if (editingNote) {
       setFormData({
@@ -21,9 +20,8 @@ function NoteForm({ notes, setNotes, editingNote, onUpdateNote, onCancelEdit }) 
         category: editingNote.category,
         description: editingNote.description
       });
-      setIsFormVisible(true); // Show form when editing
+      setIsFormVisible(true); 
     } else {
-      // Reset form when not editing
       setFormData({
         title: "",
         priority: "Medium",
@@ -66,7 +64,6 @@ function NoteForm({ notes, setNotes, editingNote, onUpdateNote, onCancelEdit }) 
     }
     
     if (editingNote) {
-      // Update existing note
       const updatedNote = {
         ...editingNote,
         ...formData,
@@ -75,7 +72,6 @@ function NoteForm({ notes, setNotes, editingNote, onUpdateNote, onCancelEdit }) 
       onUpdateNote(updatedNote);
       alert("Note updated successfully!");
     } else {
-      // Create new note
       const newNote = {
         id: Date.now(),
         ...formData,
@@ -85,7 +81,6 @@ function NoteForm({ notes, setNotes, editingNote, onUpdateNote, onCancelEdit }) 
       alert("Note added successfully!");
     }
     
-    // Reset form
     setFormData({
       title: "",
       priority: "Medium",
